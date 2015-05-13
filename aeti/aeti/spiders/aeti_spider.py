@@ -9,6 +9,7 @@ import json
 from aeti.items import AetiItem
 from json import JSONEncoder
 import pickle
+it=0
 
 # def _default(self, obj):
 #     return {'_python_object': pickle.dumps(obj)}
@@ -31,8 +32,14 @@ class AetiSpiderSpider(CrawlSpider):
     name = 'aeti_spider'
     allowed_domains = ['aeti.com']
     start_urls = ['http://www.aeti.com/careers/all']
-
-
+    
+    item={
+            "company_name":"American Electric Technologies, Inc.",
+            "company_url":"aeti.com"
+            # "job_title":str(i['job_title']),
+            # "description":str(i['desc1'])+str(i['desc2'])
+        }
+    job_title={}
     # rules = (
     #     Rule(LinkExtractor(allow=r'Items/'), callback='parse_item', follow=True),
     # )
@@ -60,13 +67,17 @@ class AetiSpiderSpider(CrawlSpider):
             else:
                 print "ding dong!"
 
-        titles=hxs.xpath('//a[@class="posts__post-title"]/text()').extract()
-        for title in titles:
-            item = NettutsItem()
-            item["title"] = title
-            yield item
+        # titles=hxs.xpath('//a[@class="posts__post-title"]/text()').extract()
+        # for title in titles:
+        #     item = NettutsItem()
+        #     item["title"] = title
+        #     yield item
+        print 
+
 
     def parse1(self,response):
+        global it
+        it=it+1
         print "hhhhhhhhhhhhhhhhhhhhhhhhhh"
         hxs =Selector(response)
         hxs1=hxs.xpath('//div[@class="content"]')
@@ -75,16 +86,20 @@ class AetiSpiderSpider(CrawlSpider):
         #      i = AetiItem()
         #      i['desc']= p1
         #      yield i
+        #global item
         i = AetiItem()
         i['company_name']="American Electric Technologies, Inc."
         i['company_url']="aeti.com"
         i['job_title']=hxs.xpath('//h1[@class="title"]/text()').extract()
         i['desc1']=hxs1.xpath('p/text()').extract()
-        #yield i
-        
-        #j= AetiItem()
         i['desc2']=hxs1.xpath('ul/li/text()').extract()
-        yield i
-
-        # with open('data.json','a') as outfile:
-        #     json.dump(i1.__dict__ for i1 in i,outfile,)#p.__dict__
+        
+        #global job_title
+        self.job_title[str(i['job_title'][0])]=str(i['desc1'])+str(i['desc2'])
+        print "ttttttttttttttttttttttttttttttt"
+        #print job_title
+        #yield i
+        self.item['jobs_opportunities']=self.job_title
+        with open('data.json','w') as outfile:
+            json.dump(self.item,outfile,)#p.__dict__
+        print "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"  
