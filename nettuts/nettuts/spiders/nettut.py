@@ -29,6 +29,7 @@ class NettutSpider(CrawlSpider):
         crawledLinks=[]
         linkPattern = re.compile("^(?:ftp|http|https):\/\/(?:[\w\.\-\+]+:{0,1}[\w\.\-\+]*@)?(?:[a-z0-9\-\.]+)(?::[0-9]+)?(?:\/|\/(?:[\w#!:\.\?\+=&amp;%@!\-\/\(\)]+)|\?(?:[\w#!:\.\?\+=&amp;%@!\-\/\(\)]+))?$")
         for link in links:
+            print link
             # If it is a proper link and is not checked yet, yield it to the Spider
             if linkPattern.match(link) and not link in crawledLinks:
                 crawledLinks.append(link)
@@ -43,3 +44,8 @@ class NettutSpider(CrawlSpider):
 
     def parse1(self,response):
         print "hhhhhhhhhhhhhhhhhhhhhhhhhh"
+        print str(response)
+        hxs =Selector(response)
+        p=hxs.xpath('//p/text()').extract()
+        #print p
+
