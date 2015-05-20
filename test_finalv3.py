@@ -21,8 +21,9 @@ urls=[
 #,'http://www.calumetspecialty.com'		### ok ok
 #,'http://www.cabotog.com'			### proper
 #,'http://www.callon.com'			### no career page
-#,'http://www.bkep.com',		### pdfs - career page
-#,'http://www.aeti.com'				### proper
+#,
+'http://www.bkep.com'	### pdfs - career page
+,'http://www.aeti.com'				### proper
 #,'http://www.alphanr.com'		### stupid url  	###shitty website
 #,'http://alphanr.mua.hrdepartment.com'		### stupid url
 #,'http://www.apachecorp.com'	###  parsing error at the end but ok
@@ -31,7 +32,7 @@ urls=[
 ill = 0
 linkPattern = re.compile("^(?:ftp|http|https):\/\/(?:[\w\.\-\+]+:{0,1}[\w\.\-\+]*@)?(?:[a-z0-9\-\.]+)(?::[0-9]+)?(?:\/|\/(?:[\w#!:\.\?\+=&amp;%@!\-\/\(\)]+)|\?(?:[\w#!:\.\?\+=&amp;%@!\-\/\(\)]+))?$")
 job=re.compile('.*career.*|.*job.*|.*posting.*',re.IGNORECASE)
-
+depth_level=0
 crawledLink=[]
 
 
@@ -43,23 +44,26 @@ for url in urls:
 		def crawl(link1):
 			print "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
 			try:
-				html=requests.get(link1)
-				soup1=BeautifulSoup(html.content)
-				for l in soup1.find_all('a'):
-					print l.get('href')
-					if job.match(str(l.get('href'))) and not str(l.get('href')) in crawledLink:
-						l1=l.get('href')
-						crawledLink.append(l1)
-						if not linkPattern.match(l1):
-							if l1[0]!='/':
-								l1=url+'/'+l1
-							else:
-								l1=url+l1
-							
-						#print l1
-						desc_link.append(l1)
-						a=crawl(l1)
-						print "ddddddddddddddddddddddddddddddddddddddddddddddddddd"
+				global depth_level
+				depth_level=depth_level+1
+				if depth_level<=10:
+					html=requests.get(link1)
+					soup1=BeautifulSoup(html.content)
+					for l in soup1.find_all('a'):
+						print l.get('href')
+						if job.match(str(l.get('href'))) and not str(l.get('href')) in crawledLink:
+							l1=l.get('href')
+							crawledLink.append(l1)
+							if not linkPattern.match(l1):
+								if l1[0]!='/':
+									l1=url+'/'+l1
+								else:
+									l1=url+l1
+								
+							#print l1
+							desc_link.append(l1)
+							a=crawl(l1)
+							print "ddddddddddddddddddddddddddddddddddddddddddddddddddd"
 			except:
 				pass
 
