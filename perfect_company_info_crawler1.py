@@ -6,42 +6,62 @@ from lxml.html.clean import Cleaner
 from goose import Goose
 from commonregex import CommonRegex
 urls=[
-#'http://www.icdrilling.com'
-#,'http://www.hollyfrontier.com'
-#,'http://www.hpinc.com'				###  more depth level
-#,'http://www.halliburton.com'		###  parsing error at the end but ok
-#,'http://www.globalp.com'			###   stupid url #waste
 
-#,'http://glorienergy.com'		###   proper
-#,'www.newfld.com'
-#,'http://www.noblecorp.com/'
-#,'http://www.crc.com'				###  more depth level
-#,'http://www.billbarrettcorp.com/opportunities/current-openings/'			### stupid url
-#,'http://www.basware.com'			###   stupid url 
-#,'http://www.ballard.com'			###  more depth level   ####loads of shit
-#,'http://www.ntenergy.com/'
-#,'http://www.c-a-m.com'			###		shitty website
-#,'http://www.tataatsu.com'
-#,'http://www.calumetspecialty.com'		### ok ok
-#,'http://www.cabotog.com'			### proper
-#,'http://www.callon.com'			### no career page
-#,'http://www.bkep.com'		### pdfs - career page
-#,'http://www.aeti.com'				### proper
-#,'http://www.alphanr.com'		### stupid url  	###shitty website
-#,'http://alphanr.mua.hrdepartment.com'		### stupid url
-#,'http://www.apachecorp.com'	###  parsing error at the end but ok
-#,'http://www.archcoal.com'		### last link wrong
+
+
+#,'http://www.murphyoilcorp.com'					###		working
+#,'http://www.millerenergyresources.com'			###		working
+#,'http://www.midstatespetroleum.com'			###		working		### needs visible-text search selection
+#,'http://www.nabors.com'					###		same problem as hollyfrontier 		### imp stuff inside 'form'
+#,'http://www.nov.com'					###		same problem as hollyfrontier 		### imp stuff inside 'form' ###also unmatch word 'sustainability'
+#,'http://www.ngsgi.com'				###		not working ### needs visible-text search selection
+#,'http://www.nrplp.com'					###		not working ### needs visible-text search selection
+#,'http://www.newconceptenergy.com'		### 	working  but website has less content
+
+#,'http://www.matadorresources.com'		###		working
+#,'http://www.markwest.com'				###		working
+#,'http://www.magellanlp.com'				###		same problem as hollyfrontier 		### imp stuff inside 'form' 
+#,'http://www.lucasenergy.com'			### 	working
+#,'http://www.linnco.com'				### 	working
+#,'http://www.lilisenergy.com'			### 	working
+#'http://www.laredopetro.com'			#### working
+#,'http://www.kosmosenergy.com'			### 	working
+#,'http://www.philips.co.in'			### too much data output  ###needs to be refined
+#,'http://www.icdrilling.com'			###		working
+#,'http://www.hollyfrontier.com'		### need to be worked on
+#,'http://www.hpinc.com'				###  ok ok
+#,
+'http://www.halliburton.com'		###  same problem as hollyfrontier  ###working but shitty output
+
+#,'http://glorienergy.com'		###   proper ### working
+#,'http://www.noblecorp.com'		###	   working
+#,'http://www.crc.com'				###  working
+#,'http://www.ballard.com'			###  more depth level   ####loads of shit  ### ok ok 		### working
+#,'http://www.ntenergy.com'			### working
+#,'http://www.c-a-m.com'			###		shitty website ## ok ok 
+#,'http://www.tataatsu.com'			### dont even try
+#,'http://www.calumetspecialty.com'		### loads of shit  				###	ok ok
+#,'http://www.cabotog.com'			### working but check it
+#,'http://www.callon.com'			### no career page			###	working
+#,'http://www.bkep.com'		 ###proper	
+#,'http://www.aeti.com'				### proper			### working
+#,'http://www.alphanr.com'		###proper	
+#,'http://www.apachecorp.com'	###  too much data output  ###needs to be refined
+#,'http://www.archcoal.com'		### working but check it
 ]
 ill = 0
 linkPattern = re.compile("^(?:ftp|http|https):\/\/(?:[\w\.\-\+]+:{0,1}[\w\.\-\+]*@)?(?:[a-z0-9\-\.]+)(?::[0-9]+)?(?:\/|\/(?:[\w#!:\.\?\+=&amp;%@!\-\/\(\)]+)|\?(?:[\w#!:\.\?\+=&amp;%@!\-\/\(\)]+))?$")
-job=re.compile('.*team.*|.*contact.*|.*about.*|.*management.*',re.IGNORECASE)
-unwanted=re.compile('.*join.*|.*pdf.*|.*recruit.*|.*fact.*|.*mission.*|.*values.*|.*career.*|.*history.*',re.IGNORECASE)
+job=re.compile('.*team.*|.*contact.*|.*about.*|.*management.*|.*directors.*',re.IGNORECASE)
+job_okok=re.compile('.*team.*|.*contact.*|.*about.*|.*management.*|.*directors.*|.*governance.*',re.IGNORECASE)
+unwanted=re.compile('.*join.*|.*mailto.*|.*pdf.*|.*recruit.*|.*events?.*|.*facts.*|.*mission.*|.*values.*|.*faq.*|.*news.?r?.*|.*career.*|.*updates.*|.*history.*|.*vision.*|.*award.*|.*products.*|.*polic(y|ies).*|.*feedback.*|.*support.*|.*innovaitons.*',re.IGNORECASE)
+## NOTE: word 'resources removed from 'unwanted  and 'governance' is added.. add 'how.?.?we' = 1 add safety= 2
+lang=re.compile('.*japanese.*|.*mandarin.*|.*portuguese.*|.*germen.*|.*french.*|.*twitter.*|.*linkedin.*|.*google.*',re.IGNORECASE)
+err=re.compile('.*runtime.?error.*|.*403.?.?forbidden.*|.*not.?found.*',re.IGNORECASE)
 desc_link=[]
 crawledLink=[]
 word_pattern = re.compile('([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+[a-z]+)?(?:\s+[A-Z][a-z]+)+)')
 #self.contiguous_words = re.findall(word_pattern,self.article.text) 
 depth_level=0
-#seen=set()
 for url in urls:
 	ill=ill+1
 	with open('link%i.txt'%ill,"w") as outfile:
@@ -56,22 +76,23 @@ for url in urls:
 					html=requests.get(link1)
 					soup1=BeautifulSoup(html.content)
 					for l in soup1.find_all('a'):
-						print l.get('href')
-						if job.match(str(l.get('href'))) and  not unwanted.match(str(l.get('href'))) and not str(l.get('href')) in crawledLink:
-							l1=l.get('href')
-							crawledLink.append(l1)
-							if not linkPattern.match(l1):
-								if l1[0]!='/':
-									l1=url+'/'+l1
-								else:
-									l1=url+l1
-								
+						l1=str(l.get('href'))
+						print l1
+						if not linkPattern.match(l1):
+							if l1[0]!='/':
+								l1=url+'/'+l1
+							else:
+								l1=url+l1
+
+						if (job_okok.match(l1) or job_okok.match(l.get_text())) and  not ( unwanted.match(l1) or unwanted.match(l.get_text())) and not lang.match(l1) and not l1 in crawledLink:
+							crawledLink.append(l1)								
 							#print l1
-							desc_link.append(l1)
+							if not l1 in desc_link:
+								desc_link.append(l1)
 							a=crawl(l1)
-							print "ddddddddddddddddddddddddddddddddddddddddddddddddddd"
+				print "ddddddddddddddddddddddddddddddddddddddddddddddddddd"
 			except:
-				pass
+				print "ERROR with " + link1
 
 
 		try:
@@ -81,12 +102,11 @@ for url in urls:
 			career_links=[]
 			soup = BeautifulSoup(shtml.content)
 			for link in soup.find_all('a'):
-				print link.get('href')
-				if job.match(str(link.get('href'))):
+				link1=link.get('href')
+				print link1
+				if (job_okok.match(str(link.get('href'))) or job_okok.match(link.get_text()))and not (unwanted.match(link1) or unwanted.match(link.get_text())) and not lang.match(link1):
 					print "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"
-					link1=link.get('href')
-					
-					if not linkPattern.match(link1) and not unwanted.match(link1):
+					if not linkPattern.match(link1) :
 						if link1[0]!='/':
 							link1=url+'/'+link1
 						else:
@@ -94,6 +114,7 @@ for url in urls:
 					if not link1 in crawledLink:
 						crawledLink.append(link1)
 						depth_level=0
+						desc_link.append(link1)
 						a=crawl(link1)
 		except:
 			pass
@@ -103,34 +124,32 @@ for url in urls:
 		import urllib
 		textss=[]
 		for url in desc_link:
-			if len(url)<100:
+			if len(url)<100 and job.match(url) and  not unwanted.match(url) and not lang.match(url):
 				#outfile.write(" { ")
 				try:
-
-					# g=Goose()
-					# art=g.extract(url=url)
-					# text=art.cleaned_text.encode("utf-8")
-					# print "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"
-					# print text
-					#outfile.write(text)
 					html = requests.get(url)    
-					raw = BeautifulSoup(html.content)  
+					raw = BeautifulSoup(html.content)
+					#print raw.get_text()
+					print str(len(raw('video')))+ "   " + str(len(raw('form'))) + "  " + str(len(raw('input'))) +" " + url
+					# NOTE: set imput len limit 15or14. but one site had many as 26-proper one only.
+					if err.match(str(raw('title'))) or err.match(str(raw('text'))):
+						print "server error with "+url
+						continue
+#					print "form lenth = " + str(len(raw('form')))
+					if len(raw('form'))>2:
+						print "form lenth = " + str(len(raw('form'))) + "\n url= " + url
+						continue
 					for s in raw('style'):
 						s.extract()
 					for s in raw('script'):
 						s.extract()
-
-					# parsed_text = CommonRegex(raw.get_text())
-					# print parsed_text.phones
-					# print parsed_text.emails
-					# print parsed_text.street_addresses
-					#global seen
+					for s in raw('input'):
+						s.extract()					
 					text=re.sub(r"\n\n\n",' ',raw.get_text())
-					
-					#seen.add(text)
-
-					outfile.write(text.encode('utf-8'))
-					
+					try:
+						outfile.write(text.encode('utf-8'))
+					except:
+						print "encode ERROR"					
 					#print parsed_text
 				except:
 					print "ERROR with " + str(url)
